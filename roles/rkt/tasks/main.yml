@@ -1,0 +1,11 @@
+---
+- name: Check for rkt install
+  shell: dpkg -s rkt | grep 'install ok installed'
+  register: is_installed
+  changed_when: is_installed.rc != 0
+- name: Install rkt
+  apt:
+    deb="https://github.com/rkt/rkt/releases/download/v1.27.0/rkt_1.27.0-1_amd64.deb"
+  become: true
+  become_method: sudo
+  when: is_installed.rc != 0

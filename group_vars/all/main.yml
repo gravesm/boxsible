@@ -1,0 +1,5 @@
+---
+build_dir: "{{ ansible_env.HOME }}/boxsible_build"
+install_dir: /opt
+
+profanity_version: 0.5.1

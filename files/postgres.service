@@ -1,0 +1,11 @@
+[Unit]
+Description=PostGreSQL server
+
+[Service]
+Slice=machine.slice
+ExecStart=/usr/bin/rkt --insecure-options=image run --net=host --volume data,kind=host,source=/var/lib/postgresql/data docker://mdillon/postgis --mount volume=data,target=/var/lib/postgresql/data
+KillMode=mixed
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

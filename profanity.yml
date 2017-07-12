@@ -1,0 +1,51 @@
+---
+- hosts: all
+  name: Install profanity
+  roles:
+    - apt
+    - compile
+  tasks:
+    - name: Install profanity dependencies
+      apt: name={{ item }} state=installed
+      with_items:
+        - libstrophe-dev
+        - libncursesw5-dev
+        - libglib2.0-dev
+        - libcurl3-dev
+        - libreadline-dev
+      become: true
+      become_method: sudo
+    - name: Make profanity install directory
+      file:
+        path: "{{ install_dir }}/profanity"
+        state: directory
+      become: true
+      become_method: sudo
+    - name: Get profanity
+      unarchive:
+        remote_src: yes
+        src: "http://www.profanity.im/profanity-{{ profanity_version }}.tar.gz"
+        dest: "{{ build_dir }}"
+        creates: "{{ build_dir }}/profanity-{{ profanity_version }}/configure"
+    - name: Configure profanity
+      command: >
+        ./configure prefix={{ install_dir }}/profanity
+        chdir={{ build_dir }}/profanity-{{ profanity_version }}
+    - name: Build profanity
+      command: >
+        make
+        chdir={{ build_dir }}/profanity-{{ profanity_version }}
+        creates={{ build_dir }}/profanity-{{ profanity_version }}/profanity
+    - name: Install profanity
+      command: >
+        make install
+        chdir={{ build_dir }}/profanity-{{ profanity_version }}
+      become: true
+      become_method: sudo
+    - name: Link profanity
+      file:
+        src: "{{ install_dir }}/profanity/bin/profanity"
+        dest: /usr/local/bin/profanity
+        state: link
+      become: true
+      become_method: sudo

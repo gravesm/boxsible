@@ -1,0 +1,25 @@
+---
+- hosts: all
+  roles:
+    - rkt
+  name: Install PostGres (PostGIS) Service
+  tasks:
+    - name: Create data directory
+      file:
+        path: /var/lib/postgresql/data
+        state: directory
+      become: true
+      become_method: sudo
+    - name: Copy service file
+      copy:
+        src: files/postgres.service
+        dest: /etc/systemd/system/postgres.service
+      become: true
+      become_method: sudo
+    - name: Enable/start service
+      systemd:
+        name: postgres
+        enabled: yes
+        state: started
+      become: true
+      become_method: sudo

@@ -1,0 +1,30 @@
+---
+- hosts: all
+  name: Install firewall service
+  tasks:
+    - name: Ensure /etc/firewall exists
+      file:
+        path: /etc/firewall
+        state: directory
+      become: true
+      become_method: sudo
+    - name: Copy firewall script
+      copy:
+        src: files/enable.sh
+        dest: /etc/firewall/enable.sh
+        mode: 0750
+      become: true
+      become_method: sudo
+    - name: Copy service file
+      copy:
+        src: files/firewall.service
+        dest: /etc/systemd/system/firewall.service
+      become: true
+      become_method: sudo
+    - name: Enable/start service
+      systemd:
+        name: firewall
+        enabled: yes
+        state: started
+      become: true
+      become_method: sudo
