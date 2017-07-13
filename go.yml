@@ -1,0 +1,22 @@
+---
+- hosts: all
+  name: Install Go
+  tasks:
+    - name: Download Go
+      unarchive:
+        remote_src: yes
+        src: "https://storage.googleapis.com/golang/go{{ go_version }}.linux-amd64.tar.gz"
+        dest: /usr/local/
+        creates: /usr/local/go/bin/go
+      become: true
+      become_method: sudo
+    - name: Add Go to PATH
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.bash_profile"
+        line: 'PATH=/usr/local/go/bin:$PATH'
+        state: present
+    - name: Ensure Go workspace
+      file:
+        path: "{{ ansible_env.HOME }}/go"
+        state: directory
+

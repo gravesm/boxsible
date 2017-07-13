@@ -1,4 +1,8 @@
 ---
+- include_role:
+    name: apt
+- name: Install systemd container tools
+  apt: name=systemd-container state=installed
 - name: Check for rkt install
   shell: dpkg -s rkt | grep 'install ok installed'
   register: is_installed
