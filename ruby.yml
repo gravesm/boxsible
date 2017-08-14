@@ -1,0 +1,47 @@
+---
+- hosts: all
+  name: Install ruby-install and chruby
+  roles:
+    - apt
+    - compile
+  tasks:
+    - name: Install ruby-install dependencies
+      apt: name={{ item }} state=installed
+      with_items:
+        - libffi-dev
+        - libncurses5-dev
+        - libreadline-dev
+        - libyaml-dev
+        - zlib1g-dev
+      become: true
+      become_method: sudo
+    - name: Get ruby-install
+      unarchive:
+        remote_src: yes
+        src: "https://github.com/postmodern/ruby-install/archive/v{{ ruby_install_version }}.tar.gz"
+        dest: "{{ build_dir }}"
+        creates: "{{ build_dir }}/ruby-install-{{ ruby_install_version }}/Makefile"
+    - name: Install ruby-install
+      command: >
+        make install
+        chdir={{ build_dir }}/ruby-install-{{ ruby_install_version }}
+      become: true
+      become_method: sudo
+    - name: Get chruby
+      unarchive:
+        remote_src: yes
+        src: "https://github.com/postmodern/chruby/archive/v{{ chruby_version }}.tar.gz"
+        dest: "{{ build_dir }}"
+        creates: "{{ build_dir }}/chruby-{{ chruby_version }}/Makefile"
+    - name: Install chruby
+      command: >
+        make install
+        chdir={{ build_dir }}/chruby-{{ chruby_version }}
+      become: true
+      become_method: sudo
+    - name: Configure chruby
+      blockinfile:
+        path: "{{ ansible_env.HOME }}/.bash_profile"
+        block: |
+          source /usr/local/share/chruby/chruby.sh
+          source /usr/local/share/chruby/auto.sh

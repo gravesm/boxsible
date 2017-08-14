@@ -7,6 +7,10 @@
     - automake
     - autoconf
     - autoconf-archive
+    - bison
+    - build-essential
+    - libgdbm-dev
+    - libssl-dev
     - libtool
     - pkg-config
   become: true
