@@ -1,0 +1,23 @@
+---
+- hosts: all
+  name: Install cheat.sh
+  tasks:
+    - name: Install cheat.sh script
+      get_url:
+        url: "https://cht.sh/:cht.sh"
+        headers:
+          "User-Agent": curl
+        dest: "{{ ansible_env.HOME }}/.local/bin/cht.sh"
+        force: yes
+        mode: 0775
+    - name: Ensure bash completion directory
+      file:
+        path: "{{ ansible_env.HOME }}/.local/share/bash-completion/completions"
+        state: directory
+    - name: Install cheat.sh bash completion
+      get_url:
+        url: "https://cheat.sh/:bash_completion"
+        headers:
+          "User-Agent": curl
+        dest: "{{ ansible_env.HOME }}/.local/share/bash-completion/completions/cht.sh"
+        force: yes
