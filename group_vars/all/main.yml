@@ -2,7 +2,8 @@
 build_dir: "{{ ansible_env.HOME }}/boxsible_build"
 install_dir: /opt
 
-profanity_version: 0.5.1
-go_version: 1.11.5
-ruby_install_version: 0.6.1
 chruby_version: 0.3.9
+go_version: 1.11.5
+profanity_version: 0.5.1
+rkt_version: 1.30.0
+ruby_install_version: 0.6.1

@@ -2,14 +2,13 @@
 - include_role:
     name: apt
 - name: Install systemd container tools
-  apt: name=systemd-container state=installed
-- name: Check for rkt install
-  shell: dpkg -s rkt | grep 'install ok installed'
-  register: is_installed
-  changed_when: is_installed.rc != 0
+  apt: name=systemd-container state=present
+- name: Installed packages
+  package_facts:
+    manager: apt
 - name: Install rkt
   apt:
-    deb="https://github.com/rkt/rkt/releases/download/v1.27.0/rkt_1.27.0-1_amd64.deb"
+    deb="https://github.com/rkt/rkt/releases/download/v{{ rkt_version }}/rkt_{{ rkt_version }}-1_amd64.deb"
   become: true
   become_method: sudo
-  when: is_installed.rc != 0
+  when: '"rkt" in ansible_facts.packages and ansible_facts.packages.rkt[0]["version"] != "{{ rkt_version }}-1"'
