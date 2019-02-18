@@ -1,0 +1,31 @@
+---
+- hosts: all
+  name: Install Terraform and related utilities
+  roles:
+    - go
+    - stow
+  tasks:
+    - name: Create XDG directory
+      file:
+        path: "{{ stow }}/terraform/.local/bin"
+        state: directory
+    - name: Download TF
+      unarchive:
+        remote_src: yes
+        src: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_amd64.zip"
+        dest: "{{ stow }}/.local/bin"
+        creates: "{{ stow }}/terraform/.local/bin/terraform"
+    - name: Stow TF
+      command: stow terraform
+    - name: Alias Terraform
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.bash_aliases"
+        line: "alias tf=terraform"
+    - name: Install terraform-docs
+      command: go get -u github.com/segmentio/terraform-docs
+    - name: Alias terraform-docs
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.bash_aliases"
+        line: "alias tf-docs=terraform-docs"
+    - name: Install scenery
+      command: go get -u github.com/dmlittle/scenery

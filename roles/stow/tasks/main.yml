@@ -1,0 +1,15 @@
+---
+- include_role:
+    name: apt
+- name: Install stow
+  apt: name=stow
+  become: true
+  become_method: sudo
+- name: Create stow directory
+  file:
+    path: "{{ stow }}"
+    state: directory
+- name: Install stow config
+  copy:
+    src: files/.stowrc
+    dest: "{{ ansible_env.HOME }}/.stowrc"
