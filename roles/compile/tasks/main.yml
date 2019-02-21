@@ -2,17 +2,18 @@
 - include_role:
     name: apt
 - name: Install apt packages
-  apt: name={{ item }} state=installed
-  with_items:
-    - automake
-    - autoconf
-    - autoconf-archive
-    - bison
-    - build-essential
-    - libgdbm-dev
-    - libssl-dev
-    - libtool
-    - pkg-config
+  apt: name={{ packages }} state=present
+  vars:
+    packages:
+      - automake
+      - autoconf
+      - autoconf-archive
+      - bison
+      - build-essential
+      - libgdbm-dev
+      - libssl-dev
+      - libtool
+      - pkg-config
   become: true
   become_method: sudo
 - name: Make build directory

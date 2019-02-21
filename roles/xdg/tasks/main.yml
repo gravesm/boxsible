@@ -1,0 +1,11 @@
+---
+- name: Create XDG directory structure
+  file:
+    state: directory
+    path: "{{ item }}"
+  with_items:
+    - "{{ home }}/.config"
+    - "{{ home }}/.cache"
+    - "{{ home }}/.local/bin"
+    - "{{ home }}/.local/share"
+    - "{{ home }}/.local/src"
