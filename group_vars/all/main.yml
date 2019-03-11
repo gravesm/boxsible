@@ -12,3 +12,4 @@ python_version: 3.7.2
 rkt_version: 1.30.0
 ruby_install_version: 0.6.1
 terraform_version: 0.11.11
+vte_version: 0.54.2.a

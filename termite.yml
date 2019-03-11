@@ -1,0 +1,82 @@
+---
+- hosts: all
+  name: Install termite
+  roles:
+    - apt
+    - compile
+    - xdg
+  tasks:
+    - name: Install vte dependencies
+      apt: name={{ packages }} state=present
+      vars:
+        packages:
+          - autoconf
+          - libglib2.0-dev
+          - gtk-doc-tools
+          - libpcre2-dev
+          - libgirepository1.0-dev
+          - gperf
+          - libvte-2.91-dev
+          - libvte-dev
+          - valac
+          - intltool
+    - name: Download vte
+      unarchive:
+        remote_src: yes
+        src: "https://github.com/thestinger/vte-ng/archive/{{ vte_version }}.tar.gz"
+        dest: "{{ src }}"
+        creates: "{{ src }}/vte-ng-{{ vte_version }}"
+    - name: Create Makefile
+      command: >
+        ./autogen.sh
+        chdir={{ src }}/vte-ng-{{ vte_version }}
+        creates={{ src }}/vte-ng-{{ vte_version }}/Makefile
+    - name: Configure vte
+      command: >
+        ./configure --prefix={{ stow }}/vte-ng-{{ vte_version }}
+        chdir={{ src }}/vte-ng-{{ vte_version }}
+    - name: Build vte
+      command: >
+        make
+        chdir={{ src }}/vte-ng-{{ vte_version }}
+        creates={{ src }}/vte-ng-{{ vte_version }}/src/.libs
+    - name: Install vte
+      command: >
+        make install
+        chdir={{ src }}/vte-ng-{{ vte_version }}
+        creates={{ stow }}/vte-ng-{{ vte_version }}
+    - name: Stow vte
+      command: stow vte-ng-{{ vte_version }}
+    - name: Clone termite repo
+      git:
+        repo: https://github.com/thestinger/termite.git
+        dest: "{{ src }}/termite"
+    - name: Build termite
+      command: >
+        make
+        chdir={{ src }}/termite
+        creates={{ src }}/termite/termite
+    - name: Create install directory
+      file:
+        state: directory
+        path: "{{ stow }}/termite/bin"
+    - name: Install termite
+      copy:
+        dest: "{{ stow }}/termite/bin/termite"
+        src: "{{ src }}/termite/termite"
+        mode: 0755
+    - name: Stow termite
+      command: stow termite
+    - name: Create config dir
+      file:
+        state: directory
+        path: "{{ home }}/.config/termite"
+    - name: Configure termite
+      copy:
+        dest: "{{ home }}/.config/termite/config"
+        src: files/termite.config
+    - name: Set termite as default terminal
+      lineinfile:
+        path: "{{ home }}/.bash_profile"
+        line: "export TERMINAL=termite"
+        state: present
