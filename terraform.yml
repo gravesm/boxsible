@@ -7,16 +7,16 @@
   tasks:
     - name: Create XDG directory
       file:
-        path: "{{ stow }}/terraform/bin"
+        path: "{{ stow }}/terraform-{{ terraform_version }}/bin"
         state: directory
     - name: Download TF
       unarchive:
         remote_src: yes
         src: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_amd64.zip"
-        dest: "{{ stow }}/terraform/bin"
-        creates: "{{ stow }}/terraform/bin/terraform"
+        dest: "{{ stow }}/terraform-{{ terraform_version }}/bin"
+        creates: "{{ stow }}/terraform-{{ terraform_version }}/bin/terraform"
     - name: Stow TF
-      command: stow terraform
+      command: stow terraform-{{ terraform_version }}
     - name: Alias Terraform
       lineinfile:
         path: "{{ ansible_env.HOME }}/.bash_aliases"
