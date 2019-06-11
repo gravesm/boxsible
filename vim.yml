@@ -1,0 +1,51 @@
+- hosts: all
+  name: Install vim
+  roles:
+    - apt
+    - compile
+    - xdg
+  tasks:
+    - name: Remove existing vim
+      apt: name={{ packages }} state=absent
+      vars:
+        packages:
+          - vim
+          - vim-runtime
+          - gvim
+    - name: Install dependencies
+      apt: name={{ packages }} state=present
+      vars:
+        packages:
+          - libx11-dev
+          - libxt-dev
+          - libncurses5-dev
+          - git
+    - name: Download vim
+      unarchive:
+        remote_src: yes
+        src: "https://github.com/vim/vim/archive/v{{ vim_version }}.tar.gz"
+        dest: "{{ src }}"
+        creates: "{{ src }}/vim-{{ vim_version }}"
+    - name: Configure vim
+      command: >
+        ./configure
+          --prefix={{ stow }}/vim-{{ vim_version }}
+          --with-features=huge
+          --enable-python3interp=yes
+          --with-python-command=python3.7
+          --with-x
+          --disable-gui
+          --disable-netbeans
+        chdir={{ src }}/vim-{{ vim_version }}
+    - name: Build vim
+      command: >
+        make
+        chdir={{ src }}/vim-{{ vim_version }}
+        creates={{ src }}/vim-{{ vim_version }}/src/vim
+    - name: Install vim
+      command: >
+        make install
+        chdir={{ src }}/vim-{{ vim_version }}
+        creates={{ stow }}/vim-{{ vim_version }}
+    - name: Stow vim
+      command: stow vim-{{ vim_version }}

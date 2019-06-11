@@ -6,10 +6,11 @@ src: "{{ home }}/.local/src"
 stow: "{{ home }}/.local/stow"
 
 chruby_version: 0.3.9
-go_version: 1.11.5
+go_version: 1.12.5
 profanity_version: 0.5.1
 python_version: 3.7.2
 rkt_version: 1.30.0
 ruby_install_version: 0.6.1
 terraform_version: 0.11.13
+vim_version: 8.1.1517
 vte_version: 0.54.2.a
