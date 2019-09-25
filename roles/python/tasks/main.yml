@@ -1,0 +1,26 @@
+- name: Download Python
+  unarchive:
+    remote_src: yes
+    src: "https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tar.xz"
+    dest: "{{ src }}"
+    creates: "{{ src }}/Python-{{ python_version }}"
+- name: Configure Python
+  command: >
+    ./configure prefix={{ stow }}/python-{{ python_version }}
+    chdir={{ src }}/Python-{{ python_version }}
+    creates={{ src }}/Python-{{ python_version }}/python
+- name: Build Python
+  command: >
+    make
+    chdir={{ src }}/Python-{{ python_version }}
+    creates={{ src }}/Python-{{ python_version }}/python
+- name: Install Python
+  command: >
+    make install
+    chdir={{ src }}/Python-{{ python_version }}
+    creates={{ stow }}/python-{{ python_version }}
+- name: Stow Python
+  command: stow python-{{ python_version }}
+- name: Install pipx
+  command: >
+    python3 -m pip install --user pipx

@@ -15,8 +15,11 @@
         src: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_amd64.zip"
         dest: "{{ stow }}/terraform-{{ terraform_version }}/bin"
         creates: "{{ stow }}/terraform-{{ terraform_version }}/bin/terraform"
+    - name: Get installed version
+      shell: terraform -version | head -n 1 | grep -P -o -e "\d+\.\d+\.\d+" -
+      register: installed_version
     - name: Stow TF
-      command: stow terraform-{{ terraform_version }}
+      command: stow -D terraform-{{ installed_version.stdout }} -S terraform-{{ terraform_version }}
     - name: Alias Terraform
       lineinfile:
         path: "{{ ansible_env.HOME }}/.bash_aliases"

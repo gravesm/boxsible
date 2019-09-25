@@ -47,5 +47,13 @@
         make install
         chdir={{ src }}/vim-{{ vim_version }}
         creates={{ stow }}/vim-{{ vim_version }}
+    - name: Get stowed version
+      shell: "{ vim --version | head -n 1 | cut -d ' ' -f 5 | tr -d '\n'; echo -n '.'; vim --version | head -n 2 | tail -n 1 | cut -d '-' -f 2 | tr -d '\n'; }"
+      register: stowed_version
     - name: Stow vim
-      command: stow vim-{{ vim_version }}
+      command: stow -D vim-{{ stowed_version.stdout }} -S vim-{{ vim_version }}
+    - name: Link vi
+      file:
+        src: ~/.local/bin/vim
+        dest: ~/.local/bin/vi
+        state: link
