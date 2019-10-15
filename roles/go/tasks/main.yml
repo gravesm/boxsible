@@ -23,12 +23,3 @@
     path: "{{ ansible_env.HOME }}/.bash_profile"
     line: 'PATH=/usr/local/go/bin:$PATH'
     state: present
-- name: Ensure Go workspace
-  file:
-    path: "{{ ansible_env.HOME }}/go"
-    state: directory
-- name: Add GOPATH to PATH
-  lineinfile:
-    path: "{{ ansible_env.HOME }}/.bash_profile"
-    line: 'PATH={{ ansible_env.HOME }}/go/bin:$PATH'
-    state: present
